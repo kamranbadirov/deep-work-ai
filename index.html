@@ -1,0 +1,1233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Depth in the Age of AI &mdash; a field guide</title>
+    <style>
+      :root {
+        --paper: #f7f4ec;
+        --paper-2: #ede8d8;
+        --ink: #1a1714;
+        --ink-2: #4d4641;
+        --muted: #756c63;
+        --rule: #d8d1bf;
+        --accent: #7b2d26;
+        --accent-soft: #c97a5d;
+        --card: #fbf9f2;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", system-ui, sans-serif;
+        font-size: 16.5px;
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        min-height: 100vh;
+      }
+      aside.sidebar {
+        background: var(--paper-2);
+        border-right: 1px solid var(--rule);
+        padding: 52px 36px 36px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+      }
+      .brand {
+        font-family: "Iowan Old Style", Georgia, "Times New Roman", serif;
+        font-size: 22px;
+        line-height: 1.25;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+        margin: 0 0 8px;
+      }
+      .brand-sub {
+        font-size: 12.5px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        margin: 0 0 36px;
+      }
+      .nav-section-label {
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        margin: 28px 0 10px;
+      }
+      nav ul { list-style: none; padding: 0; margin: 0; }
+      nav li { margin: 2px 0; }
+      nav a {
+        display: block;
+        padding: 8px 12px;
+        color: var(--ink-2);
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 15px;
+        line-height: 1.45;
+        border-left: 2px solid transparent;
+        margin-left: -14px;
+        padding-left: 12px;
+        cursor: pointer;
+        transition: color 120ms, background 120ms, border-color 120ms;
+      }
+      nav a:hover {
+        color: var(--ink);
+        background: rgba(123, 45, 38, 0.05);
+      }
+      nav a.active {
+        color: var(--accent);
+        border-left-color: var(--accent);
+        background: rgba(123, 45, 38, 0.07);
+        font-weight: 500;
+      }
+      main {
+        padding: 72px 80px 120px;
+        max-width: 820px;
+      }
+      section.page { display: none; }
+      section.page.active { display: block; }
+      .eyebrow {
+        font-size: 12px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        font-weight: 600;
+        margin: 0 0 14px;
+      }
+      h1 {
+        font-family: "Iowan Old Style", Georgia, "Times New Roman", serif;
+        font-size: 40px;
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+        font-weight: 600;
+        margin: 0 0 18px;
+      }
+      h2 {
+        font-family: "Iowan Old Style", Georgia, "Times New Roman", serif;
+        font-size: 26px;
+        line-height: 1.25;
+        margin: 56px 0 14px;
+        letter-spacing: -0.01em;
+        font-weight: 600;
+      }
+      h3 {
+        font-size: 17px;
+        margin: 36px 0 8px;
+        font-weight: 600;
+        letter-spacing: 0.005em;
+      }
+      .dek {
+        font-size: 19px;
+        line-height: 1.5;
+        color: var(--ink-2);
+        margin: 0 0 36px;
+        font-style: italic;
+      }
+      p { margin: 0 0 18px; }
+      a.inline { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+      ul.body, ol.body { margin: 0 0 22px; padding-left: 22px; }
+      ul.body li, ol.body li { margin: 6px 0; }
+      strong { color: var(--ink); }
+      code {
+        font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: rgba(123, 45, 38, 0.08);
+        color: var(--accent);
+        padding: 1px 6px;
+        border-radius: 3px;
+      }
+      .pull {
+        border-left: 3px solid var(--accent);
+        padding: 4px 0 4px 20px;
+        margin: 24px 0;
+        color: var(--ink-2);
+        font-style: italic;
+        font-size: 17.5px;
+      }
+      .meta-line {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 44px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        margin: 20px 0 32px;
+      }
+      .col-card {
+        background: var(--card);
+        border: 1px solid var(--rule);
+        padding: 22px 24px;
+        border-radius: 4px;
+      }
+      .col-card h4 {
+        margin: 0 0 12px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--accent);
+      }
+      .col-card ul { margin: 0; padding-left: 18px; }
+      .col-card li { margin: 6px 0; font-size: 15px; }
+      .topic {
+        margin: 32px 0;
+        padding: 24px 28px;
+        background: var(--card);
+        border: 1px solid var(--rule);
+        border-radius: 4px;
+      }
+      .topic h3 {
+        margin: 0 0 6px;
+        font-size: 19px;
+        color: var(--ink);
+      }
+      .topic .topic-tag {
+        font-size: 11px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-weight: 600;
+        margin: 0 0 16px;
+        display: block;
+      }
+      .topic .row-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--muted);
+        margin-top: 14px;
+        margin-bottom: 4px;
+        font-weight: 600;
+      }
+      .topic ul { margin: 0 0 4px; padding-left: 20px; }
+      .topic li { margin: 4px 0; font-size: 15.2px; }
+      .num {
+        display: inline-block;
+        width: 26px;
+        height: 26px;
+        line-height: 26px;
+        text-align: center;
+        background: var(--accent);
+        color: var(--paper);
+        border-radius: 50%;
+        font-size: 13px;
+        font-weight: 600;
+        margin-right: 10px;
+        vertical-align: 2px;
+      }
+      .footer-note {
+        margin-top: 64px;
+        padding-top: 24px;
+        border-top: 1px solid var(--rule);
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .resource-group {
+        margin: 30px 0 8px;
+      }
+      .resource-group h3 {
+        margin: 36px 0 10px;
+        color: var(--ink);
+        font-size: 18px;
+      }
+      .resource-group h3:first-child { margin-top: 18px; }
+      .resource {
+        margin: 12px 0;
+        padding: 16px 20px;
+        background: var(--card);
+        border: 1px solid var(--rule);
+        border-radius: 4px;
+      }
+      .resource-name {
+        font-weight: 600;
+        font-size: 15.5px;
+        color: var(--ink);
+      }
+      .resource-url {
+        font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+        font-size: 12px;
+        color: var(--muted);
+        margin-left: 10px;
+        letter-spacing: 0.01em;
+      }
+      .resource-desc {
+        margin: 6px 0 0;
+        font-size: 14.8px;
+        color: var(--ink-2);
+        line-height: 1.55;
+      }
+      .badge {
+        display: inline-block;
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--accent);
+        background: rgba(123, 45, 38, 0.08);
+        padding: 2px 8px;
+        border-radius: 3px;
+        margin-left: 8px;
+        vertical-align: 2px;
+        font-weight: 600;
+      }
+      @media (max-width: 880px) {
+        .layout { grid-template-columns: 1fr; }
+        aside.sidebar { position: static; height: auto; padding: 28px; }
+        main { padding: 40px 28px 80px; }
+        h1 { font-size: 32px; }
+        .two-col { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <p class="brand">Depth in the Age of AI</p>
+        <p class="brand-sub">A field guide</p>
+
+        <p class="nav-section-label">The argument</p>
+        <nav>
+          <ul>
+            <li><a data-target="case-study" class="active">A bug, three fixes</a></li>
+            <li><a data-target="why-depth">Why depth still matters</a></li>
+            <li><a data-target="verify">Six tactics for catching the slip</a></li>
+            <li><a data-target="invest">What to invest in</a></li>
+          </ul>
+        </nav>
+
+        <p class="nav-section-label">The plan</p>
+        <nav>
+          <ul>
+            <li><a data-target="roadmap">Roadmap to mastery</a></li>
+            <li><a data-target="practice">Where to practice</a></li>
+          </ul>
+        </nav>
+
+        <p class="footer-note" style="margin-top:48px;">
+          A working document. Compiled from a debugging session and the
+          conversation that followed.
+        </p>
+      </aside>
+
+      <main>
+        <!-- PAGE 1 -->
+        <section id="case-study" class="page active">
+          <p class="eyebrow">Case study</p>
+          <h1>A bug, three fixes, and the cost of stopping too soon.</h1>
+          <p class="dek">
+            One ticket, three iterations, a partial fix that almost shipped.
+            What stopped it was not the AI. It was an engineer with enough
+            depth to push back precisely.
+          </p>
+
+          <p class="meta-line">From a real debugging session, ENG-2784 in a Django + React monorepo.</p>
+
+          <p>
+            The ticket was simple on its surface. The dashboard's gamification
+            page has a Prizes table. Click a prize, a drawer opens with tabs
+            for editing details and viewing purchasers. The bug: switching
+            between prizes showed the previous prize's purchasers, not the
+            new one.
+          </p>
+
+          <h2>Iteration one</h2>
+          <p>
+            The AI's first read: a <code>useEffect</code> with an empty
+            dependency array. The effect fetches purchasers on mount but
+            never re&#8209;fires when the productCode prop changes. Fix: add
+            <code>[dispatch, productCode]</code> to the deps. Test passed.
+            Lint passed. PR opened, clean.
+          </p>
+          <p>
+            The user ran it. The bug was still there.
+          </p>
+
+          <h2>Iteration two</h2>
+          <p>
+            New diagnosis: React might not be remounting the component when
+            the prize changes. Add <code>key={currentProduct?.code}</code> to
+            force unmount and remount on every switch. This was the
+            front-end-key fix the original PM had suggested in the ticket.
+            Pushed.
+          </p>
+          <p>
+            The user ran it. The bug was still there.
+          </p>
+
+          <h2>Iteration three</h2>
+          <p>
+            Only by tracing the actual data flow did the real cause emerge.
+            The row click in the drawer used a custom hook,
+            <code>useStatelessHash</code>, which updated the URL but did
+            <em>not</em> dispatch the Redux action that another selector
+            depended on. So the component was fetching the right data into
+            Redux, but reading the wrong slice back out, because the Redux
+            hash was lagging behind the URL.
+          </p>
+          <p>
+            Four layers of indirection.
+            <code>useStatelessHash</code> &rarr;
+            <code>useHash</code> &rarr;
+            <code>selectCurrentPaymentProduct</code> &rarr;
+            <code>selectLocationHash</code>. The first two fixes had been
+            working on the wrong axis entirely.
+          </p>
+
+          <div class="pull">
+            Without the user pushing back precisely &mdash; "did you actually
+            update the key?", "switching prizes still shows the previous
+            prize's purchasers" &mdash; iteration one would have shipped as
+            "fixed."
+          </div>
+
+          <h2>Why this matters</h2>
+          <p>
+            The AI was confident. The tests passed. The PR was clean. A team
+            culture of "trust the AI, ship if green" would have shipped a
+            partial fix that introduces a subtle, hard-to-reproduce
+            regression: it works most of the time, fails on certain entry
+            paths, and the original ticket gets quietly reopened weeks later.
+          </p>
+          <p>
+            The reason this didn't happen is that a human with depth was in
+            the loop, providing reproductions, vocabulary, and pressure. That
+            human did not need to write the code. They needed to know enough
+            to evaluate it.
+          </p>
+        </section>
+
+        <!-- PAGE 2 -->
+        <section id="why-depth" class="page">
+          <p class="eyebrow">Argument</p>
+          <h1>Production got cheap. Judgment didn't.</h1>
+          <p class="dek">
+            "Coding as we know it is dead, become a PM, give orders to the
+            AI." That advice is half right and half dangerous. Here is which
+            half is which.
+          </p>
+
+          <h2>What the advice gets right</h2>
+          <p>
+            The day-to-day act of <em>producing</em> code &mdash; typing it,
+            looking up syntax, scaffolding boilerplate, wiring up a CRUD
+            endpoint, writing tests where the assertion is mechanical &mdash;
+            really has been commoditized. An experienced engineer's
+            throughput is three to five times what it was. A junior whose
+            value proposition was "I can write Django views from memory" is
+            in trouble.
+          </p>
+          <p>
+            The PM-flavored skills &mdash; clear specifications, system
+            thinking, knowing what is worth building &mdash; really have
+            risen in relative value. Speed of typing is no longer the
+            constraint. It has not been for a while.
+          </p>
+
+          <h2>What the advice gets wrong</h2>
+          <p>
+            Evaluating code is exactly as hard as it ever was. Possibly
+            harder, because the code now arrives faster, in patterns the
+            reviewer might not have chosen, in volumes higher than ever
+            before. The bottleneck did not disappear. It moved. From
+            production into judgment.
+          </p>
+
+          <div class="pull">
+            You cannot supervise what you do not understand. A product
+            manager who cannot read a balance sheet can be lied to by their
+            CFO. An engineer who cannot read code can be lied to by an AI
+            &mdash; not maliciously, but because it generates plausible text,
+            and plausible is sometimes wrong.
+          </div>
+
+          <h2>The asymmetry</h2>
+          <p>
+            Generating mediocre code is now cheap. Generating <em>good</em>
+            code &mdash; correct, secure, performant, maintainable &mdash;
+            still requires someone who knows the difference. That someone
+            does not need to type fast. They need to read deeply.
+          </p>
+
+          <h2>Steering without depth is just vibes</h2>
+          <p>
+            "Make this faster." How? "Make it more secure." Against what
+            threat model? "Use a better pattern here." Which one, and why is
+            the current one bad? Without depth, every steering instruction is
+            indistinguishable from a random suggestion. Worse, you cannot
+            tell when the AI's response is steering you wrong.
+          </p>
+
+          <h2>The honest picture</h2>
+          <p>
+            The juniors who get squeezed are the ones whose value was typing
+            speed and framework memorization. The juniors who thrive are the
+            ones who can hold a system in their head, smell when something is
+            wrong, and have the depth to investigate when an AI's output does
+            not add up.
+          </p>
+        </section>
+
+        <!-- PAGE 3 -->
+        <section id="verify" class="page">
+          <p class="eyebrow">Tactics</p>
+          <h1>Six tactics for catching the slip.</h1>
+          <p class="dek">
+            Code review catches a fraction of bugs even between humans. The
+            following tactics raise that fraction when one party is an AI.
+            None of them work without underlying depth in the relevant stack.
+          </p>
+
+          <h2><span class="num">1</span>Run it. Always.</h2>
+          <p>
+            Not "tests pass." Not "looks good." Actually exercise the feature
+            end&#8209;to&#8209;end, as a user, with a reproduction case in mind.
+            The case study above shipped only because the user did this. The
+            tests, the lint, the AI's confidence &mdash; none of them caught
+            it. The browser caught it.
+          </p>
+
+          <h2><span class="num">2</span>Build a mental model of what should happen.</h2>
+          <p>
+            Before reading the diff, write down what the right answer looks
+            like. Then compare. This is the difference between reviewing what
+            the AI did and reviewing whether what it did is correct.
+          </p>
+
+          <h2><span class="num">3</span>Read the diff line by line. Ask "why" on each line.</h2>
+          <p>
+            If you cannot explain a line, you cannot trust it. This is slower
+            than letting the AI write it, but still faster than writing it
+            yourself, and it is the supervisor's job.
+          </p>
+
+          <h2><span class="num">4</span>Trace one suspicious thing all the way down.</h2>
+          <p>
+            Pick the line that smells off. Follow the function it calls. Read
+            what <em>that</em> function calls. The bug is usually two to four
+            hops from where you started looking. The case study's real cause
+            was four hops away.
+          </p>
+
+          <h2><span class="num">5</span>Ask adversarial questions.</h2>
+          <p>
+            What if the input is null. What if two requests arrive
+            simultaneously. What if the user is a staff account. What if the
+            data does not exist yet. AIs are bad at thinking of these
+            unprompted, because they tend to model the happy path the
+            training data emphasized.
+          </p>
+
+          <h2><span class="num">6</span>Test the failure modes the AI claims to handle.</h2>
+          <p>
+            About half of all "added error handling for X" is decorative.
+            Make X actually error. Confirm the handler runs. Confirm the
+            user-facing message is what was promised. Trust nothing that is
+            not exercised.
+          </p>
+        </section>
+
+        <!-- PAGE 4 -->
+        <section id="invest" class="page">
+          <p class="eyebrow">Strategy</p>
+          <h1>What to invest in. What to drop.</h1>
+          <p class="dek">
+            The skills that compound and the skills that have been
+            commoditized. A working partition for the next five years.
+          </p>
+
+          <div class="two-col">
+            <div class="col-card">
+              <h4>Invest deeply</h4>
+              <ul>
+                <li>Runtime model of your language</li>
+                <li>Standard library, used daily</li>
+                <li>One framework, deeply</li>
+                <li>The layer below (SQL, HTTP, the OS)</li>
+                <li>Debugging skill</li>
+                <li>System design judgment</li>
+                <li>Reading code, not just writing it</li>
+                <li>Adversarial thinking</li>
+              </ul>
+            </div>
+            <div class="col-card">
+              <h4>Deprioritize</h4>
+              <ul>
+                <li>Memorizing stdlib APIs</li>
+                <li>Boilerplate scaffolding</li>
+                <li>CRUD endpoint plumbing</li>
+                <li>Memorizing framework method names</li>
+                <li>Mechanical test scaffolding</li>
+                <li>Typing speed</li>
+                <li>"Knowing 12 frameworks shallowly"</li>
+                <li>Mastering the latest UI library of the month</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2>The principle</h2>
+          <p>
+            Invest in the things that let you <em>evaluate</em>. Drop the
+            things that only let you <em>produce</em>. AIs are good at
+            production. They are bad at depth, and they will continue to be
+            bad at depth for longer than anyone expects, because production
+            is a generation problem and depth is a search problem.
+          </p>
+
+          <h2>The shape of a good week</h2>
+          <p>
+            Half your time should be writing &mdash; that is where you stay
+            sharp on the act. The other half should be split between reading
+            other people's code, debugging something hard without help, and
+            reading one book chapter that has nothing to do with your
+            current ticket. The compound interest is in the last bucket.
+          </p>
+
+          <div class="pull">
+            If you only ever code things that are urgent, you only ever
+            learn things that are urgent. Make depth a habit, not a luxury.
+          </div>
+        </section>
+
+        <!-- PAGE 5 -->
+        <section id="roadmap" class="page">
+          <p class="eyebrow">Roadmap</p>
+          <h1>Roadmap to mastery.</h1>
+          <p class="dek">
+            Ten topics worth deep investment. For each: what to learn,
+            sources worth the time, and strategies for actually retaining it.
+            None of this is a checklist. It is a direction.
+          </p>
+
+          <div class="topic">
+            <span class="topic-tag">01 &middot; Language internals</span>
+            <h3>Python (or whatever your runtime is), from the inside out.</h3>
+            <p class="row-label">What</p>
+            <ul>
+              <li>The GIL, the asyncio event loop, the import system, the import cache</li>
+              <li>Descriptors, metaclasses, the data model (dunder methods)</li>
+              <li>Generators, context managers, the iterator protocol</li>
+              <li>Name resolution (LEGB), closures, mutable default arguments</li>
+              <li>Bytecode &mdash; what your code actually executes</li>
+            </ul>
+            <p class="row-label">Sources</p>
+            <ul>
+              <li><em>Fluent Python</em> by Luciano Ramalho &mdash; the canonical book</li>
+              <li>CPython source on GitHub &mdash; start with Lib/functools.py and Lib/collections</li>
+              <li>PEPs 8, 20, 257, 484, 492 &mdash; the language's own design memos</li>
+              <li>David Beazley's talks (search "Discovering Python", "Python Concurrency From the Ground Up")</li>
+            </ul>
+            <p class="row-label">Strategies</p>
+            <ul>
+              <li>Recreate one stdlib utility per week from scratch. Your own <code>lru_cache</code>. Your own <code>dataclass</code> via metaclass.</li>
+              <li>When you write a loop, ask if itertools has it</li>
+              <li>Open <code>dis</code> and look at bytecode for code you wrote &mdash; be surprised once a week</li>
+              <li>Hold office hours for yourself: one Friday afternoon a month, read source for a builtin</li>
+            </ul>
+          </div>
+
+          <div class="topic">
+            <span class="topic-tag">02 &middot; Standard library</span>
+            <h3>The stdlib is a superpower most engineers ignore.</h3>
+            <p class="row-label">What</p>
+            <ul>
+              <li>itertools, functools, contextlib</li>
+              <li>asyncio (genuinely understanding it, not pattern-matching async/await)</li>
+              <li>dataclasses, typing, collections (Counter, deque, defaultdict, ChainMap)</li>
+              <li>pathlib, subprocess, logging, argparse</li>
+            </ul>
+            <p class="row-label">Sources</p>
+            <ul>
+              <li>The official Python docs &mdash; genuinely the best</li>
+              <li><em>Python Cookbook</em> by David Beazley & Brian Jones</li>
+            </ul>
+            <p class="row-label">Strategies</p>
+            <ul>
+              <li>Pick one module per week. Read it cover to cover. Use it on something real.</li>
+              <li>Stop reaching for pip when stdlib will do</li>
+              <li>Build a small CLI tool every quarter using only stdlib &mdash; no dependencies allowed</li>
+            </ul>
+          </div>
+
+          <div class="topic">
+            <span class="topic-tag">03 &middot; One framework, deeply</span>
+            <h3>Know one thing all the way through, not twelve things at the surface.</h3>
+            <p class="row-label">What (Django example)</p>
+            <ul>
+              <li>ORM internals: querysets are lazy; N+1; <code>select_related</code> vs <code>prefetch_related</code>; <code>.annotate</code>, <code>.values</code>, <code>.only</code></li>
+              <li>Middleware chain, request/response lifecycle, signals (and why they are dangerous)</li>
+              <li>The migrations framework &mdash; what it generates, what it cannot detect</li>
+              <li>Managers vs querysets, custom QuerySet classes</li>
+            </ul>
+            <p class="row-label">Sources</p>
+            <ul>
+              <li>Django source on GitHub &mdash; read <code>django/db/models/query.py</code></li>
+              <li><em>Two Scoops of Django</em></li>
+              <li><em>High Performance Django</em> by the Lincoln Loop team</li>
+            </ul>
+            <p class="row-label">Strategies</p>
+            <ul>
+              <li>Open a shell, write a queryset, print <code>qs.query</code> &mdash; see the SQL</li>
+              <li>When you write <code>.filter()</code>, ask whether <code>select_related</code> would help</li>
+              <li>Read one of your project's migrations' generated SQL before applying it</li>
+              <li>Read one piece of middleware per week, end-to-end</li>
+            </ul>
+          </div>
+
+          <div class="topic">
+            <span class="topic-tag">04 &middot; SQL and databases</span>
+            <h3>The layer that quietly carries the company.</h3>
+            <p class="row-label">What</p>
+            <ul>
+              <li>Window functions, CTEs, lateral joins</li>
+              <li>EXPLAIN ANALYZE &mdash; reading it, not just running it</li>
+              <li>Index types: B&#8209;tree vs hash vs GIN vs BRIN</li>
+              <li>Isolation levels (READ COMMITTED, REPEATABLE READ, SERIALIZABLE), MVCC, locks, deadlocks</li>
+              <li>Transaction semantics, statement-level vs row-level locking</li>
+            </ul>
+            <p class="row-label">Sources</p>
+            <ul>
+              <li><em>Designing Data-Intensive Applications</em> by Martin Kleppmann &mdash; <strong>read it twice</strong></li>
+              <li><em>Use The Index, Luke!</em> by Markus Winand &mdash; free online, indispensable</li>
+              <li>The PostgreSQL documentation &mdash; one of the best technical docs ever written</li>
+              <li>pgexercises.com for practice</li>
+            </ul>
+            <p class="row-label">Strategies</p>
+            <ul>
+              <li>Run EXPLAIN ANALYZE on every non-trivial query you write</li>
+              <li>Reproduce a deadlock locally, on purpose, once</li>
+              <li>Practice one window function query per week until they feel natural</li>
+              <li>For every new index, write down what query it serves and how often it runs</li>
+            </ul>
+          </div>
+
+          <div class="topic">
+            <span class="topic-tag">05 &middot; HTTP and networking</span>
+            <h3>The protocol your entire app rides on.</h3>
+            <p class="row-label">What</p>
+            <ul>
+              <li>Methods, status codes (including the lesser known: 409, 412, 422, 428)</li>
+              <li>Caching: Cache-Control, ETag, Vary, conditional requests</li>
+              <li>Idempotency, safe methods, content negotiation, CORS</li>
+              <li>TCP three-way handshake, TLS handshake at the protocol level</li>
+              <li>What HTTP/2 and HTTP/3 actually change</li>
+            </ul>
+            <p class="row-label">Sources</p>
+            <ul>
+              <li>MDN's HTTP reference &mdash; the best free resource on the open web</li>
+              <li><em>High Performance Browser Networking</em> by Ilya Grigorik &mdash; free online</li>
+              <li>RFCs 7231 (HTTP semantics) and 7234 (HTTP caching)</li>
+            </ul>
+            <p class="row-label">Strategies</p>
+            <ul>
+              <li>Use curl, not Postman. Feel the protocol.</li>
+              <li>Run tcpdump or Wireshark against your own dev server once</li>
+              <li>Read your access logs daily</li>
+              <li>For every endpoint you design, explicitly choose idempotency or not, and write it down</li>
+            </ul>
+          </div>
+
+          <div class="topic">
+            <span class="topic-tag">06 &middot; Operating systems</span>
+            <h3>The substrate under everything else.</h3>
+            <p class="row-label">What</p>
+            <ul>
+              <li>Processes, threads, file descriptors, pipes</li>
+              <li>Signals, virtual memory, the page cache</li>
+              <li>Syscalls &mdash; what your code asks the kernel to do</li>
+            </ul>
+            <p class="row-label">Sources</p>
+            <ul>
+              <li><em>Operating Systems: Three Easy Pieces</em> by Remzi and Andrea Arpaci-Dusseau &mdash; free online, the best OS book ever written</li>
+              <li>strace, lsof, ltrace &mdash; used daily, not just in emergencies</li>
+              <li>The man pages for syscalls (<code>man 2 read</code>, not <code>man read</code>)</li>
+            </ul>
+            <p class="row-label">Strategies</p>
+            <ul>
+              <li>When something is mysteriously slow, run <code>strace -c</code> and see where time actually goes</li>
+              <li>Write a toy shell that handles pipes and signals correctly</li>
+              <li>Read what <code>open()</code>, <code>read()</code>, <code>write()</code>, <code>fork()</code> actually do at the kernel level</li>
+            </ul>
+          </div>
+
+          <div class="topic">
+            <span class="topic-tag">07 &middot; Debugging</span>
+            <h3>The most underrated skill in software.</h3>
+            <p class="row-label">What</p>
+            <ul>
+              <li>pdb, breakpoint(), conditional breakpoints, post-mortem debugging</li>
+              <li>Reading tracebacks &mdash; always bottom up, not top down</li>
+              <li>git bisect &mdash; when you do not know which commit broke it</li>
+              <li>Profilers (cProfile, py-spy), flame graphs</li>
+              <li>Log discipline: levels, structured logging, correlation IDs</li>
+            </ul>
+            <p class="row-label">Sources</p>
+            <ul>
+              <li><em>Debugging</em> by David Agans &mdash; small book, nine rules, every one of them gold</li>
+              <li><em>The Practice of Programming</em> by Kernighan and Pike &mdash; the debugging chapter alone is worth it</li>
+            </ul>
+            <p class="row-label">Strategies</p>
+            <ul>
+              <li>When something breaks, resist Google for ten minutes. Use pdb first.</li>
+              <li>Read tracebacks bottom to top &mdash; the actual error is at the bottom, not the dramatic Python message at the top</li>
+              <li>Bisect when you do not know. Never guess.</li>
+              <li>Keep a debugging journal: what broke, how you found it, what you would do differently. Re-read it monthly.</li>
+            </ul>
+          </div>
+
+          <div class="topic">
+            <span class="topic-tag">08 &middot; System design</span>
+            <h3>Where the senior engineers earn their keep.</h3>
+            <p class="row-label">What</p>
+            <ul>
+              <li>Caching layers: read-through, write-through, cache invalidation</li>
+              <li>Message queues, back-pressure, dead-letter queues</li>
+              <li>Idempotency at scale, exactly-once delivery, the impossibility of it</li>
+              <li>Partitioning, replication, the CAP theorem and PACELC</li>
+              <li>Eventual consistency &mdash; what it costs the product</li>
+            </ul>
+            <p class="row-label">Sources</p>
+            <ul>
+              <li><em>Designing Data-Intensive Applications</em> &mdash; again, read it twice</li>
+              <li>Stripe, Shopify, Cloudflare, GitHub engineering blogs</li>
+              <li>Published post-mortems &mdash; AWS, Google Cloud, Cloudflare all publish them</li>
+              <li>Jeff Dean's "Numbers Every Programmer Should Know"</li>
+            </ul>
+            <p class="row-label">Strategies</p>
+            <ul>
+              <li>Read one post-mortem per week. Notice what failed and what their detection gap was.</li>
+              <li>Design on paper before coding. Boxes and arrows. Force the conversation early.</li>
+              <li>Estimate orders of magnitude before measuring. Then measure. Notice when you were wrong.</li>
+            </ul>
+          </div>
+
+          <div class="topic">
+            <span class="topic-tag">09 &middot; Reading code</span>
+            <h3>The meta-skill that unlocks the others.</h3>
+            <p class="row-label">What</p>
+            <ul>
+              <li>Navigating large codebases without IDE magic</li>
+              <li>Reading PRs critically, not just rubber-stamping</li>
+              <li>Code archaeology: <code>git blame</code>, <code>git log -p</code>, finding the commit that introduced behavior</li>
+              <li>Reading source for the libraries you depend on every day</li>
+            </ul>
+            <p class="row-label">Sources</p>
+            <ul>
+              <li>Any well-maintained open source project. requests, Flask, Django, FastAPI &mdash; all readable.</li>
+              <li>Your own company's codebase, at depth, in areas you do not own</li>
+            </ul>
+            <p class="row-label">Strategies</p>
+            <ul>
+              <li>Pick one function in a library you use daily. Read it end to end. Take notes.</li>
+              <li>Read one PR per week from a project you do not work on</li>
+              <li>When confused by code, run <code>git blame</code> on the surprising line. Read the commit message and the surrounding diff.</li>
+              <li>Resist "I'll just rewrite it." Understand it first.</li>
+            </ul>
+          </div>
+
+          <div class="topic">
+            <span class="topic-tag">10 &middot; Adversarial thinking</span>
+            <h3>Assume the worst, then design around it.</h3>
+            <p class="row-label">What</p>
+            <ul>
+              <li>Threat modeling: actors, assets, attack surfaces, mitigations</li>
+              <li>OWASP Top 10, but actually understanding each one, not memorizing the list</li>
+              <li>Race conditions, TOCTOU bugs, authorization bypasses</li>
+              <li>Failure modes: what happens when the network is slow, the DB is locked, the disk is full</li>
+            </ul>
+            <p class="row-label">Sources</p>
+            <ul>
+              <li>OWASP Top 10 &mdash; free, well-maintained</li>
+              <li><em>The Tangled Web</em> by Michal Zalewski</li>
+              <li>Trail of Bits, Project Zero, NCC Group writeups</li>
+              <li>CVE reports for libraries in your dependency tree, monthly</li>
+            </ul>
+            <p class="row-label">Strategies</p>
+            <ul>
+              <li>For every feature, write the "what could go wrong" list before coding it</li>
+              <li>For every endpoint, list three malicious inputs and confirm they are handled</li>
+              <li>Pair-debug occasionally with someone who is paranoid by temperament. Steal their mental model.</li>
+              <li>Treat every external input as hostile until proven otherwise</li>
+            </ul>
+          </div>
+
+          <p class="footer-note">
+            None of these topics is a sprint. The roadmap is a direction, not
+            a checklist. Spend one focused hour a week on something here that
+            is not in your current ticket. The compound interest shows up in
+            year three.
+          </p>
+        </section>
+
+        <!-- PAGE 6 -->
+        <section id="practice" class="page">
+          <p class="eyebrow">Practice</p>
+          <h1>Where to practice.</h1>
+          <p class="dek">
+            Depth is built by writing real things. Reading helps. Watching
+            helps less. What sticks is what you have implemented yourself,
+            preferably twice. The following is a curated set, not a
+            checklist &mdash; pick one and finish it.
+          </p>
+
+          <div class="resource-group">
+            <h3>Starter pack &mdash; the well-known greats</h3>
+            <p style="color: var(--ink-2); font-size: 15.5px; margin-bottom: 18px;">
+              These are popular for good reason. If you do not know them yet,
+              start here.
+            </p>
+
+            <div class="resource">
+              <span class="resource-name">Build Your Own X</span>
+              <span class="resource-url">github.com/codecrafters-io/build-your-own-x</span>
+              <p class="resource-desc">
+                Massive curated list of "build your own [database, git, OS,
+                regex, blockchain&hellip;]" tutorials. Pick one item, build the
+                whole thing.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">CodeCrafters</span>
+              <span class="resource-url">codecrafters.io</span>
+              <p class="resource-desc">
+                Paid platform where you implement real systems &mdash; your
+                own Redis, your own git, your own Docker &mdash; on your
+                machine in the language of your choice. The closest thing to
+                a production-grade gym.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">Project-Based Learning</span>
+              <span class="resource-url">github.com/practical-tutorials/project-based-learning</span>
+              <p class="resource-desc">
+                Curated list of project tutorials organized by language. Good
+                for "I want to learn Rust by building something."
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">Coding Challenges</span>
+              <span class="resource-url">codingchallenges.fyi</span>
+              <p class="resource-desc">
+                John Crickett's weekly series &mdash; build your own wc,
+                grep, JSON parser, Memcached, etc. Tight scope, real
+                programs, satisfying to finish.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">Crafting Interpreters</span>
+              <span class="resource-url">craftinginterpreters.com</span>
+              <p class="resource-desc">
+                Bob Nystrom's free book. You build two interpreters for the
+                Lox language &mdash; one tree-walking in Java, one bytecode
+                in C. The single best hands-on intro to programming language
+                implementation in existence.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">Project Learn</span>
+              <span class="resource-url">projectlearn.io</span>
+              <p class="resource-desc">
+                Project ideas filtered by category and difficulty. Useful
+                when you know you want to build something but cannot decide
+                what.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">Destroy All Software</span>
+              <span class="resource-url">destroyallsoftware.com</span>
+              <p class="resource-desc">
+                Gary Bernhardt's paid screencasts. Less about projects, more
+                about workflow, architecture, and a particular taste for
+                programming. "Wat" is famous; the catalog is the value.
+              </p>
+            </div>
+          </div>
+
+          <div class="resource-group">
+            <h3>
+              Hidden gems worth adding
+              <span class="badge">recommended</span>
+            </h3>
+
+            <h3>Distributed systems &mdash; the hardest area to learn alone</h3>
+
+            <div class="resource">
+              <span class="resource-name">Fly.io Gossip Glomers</span>
+              <span class="resource-url">fly.io/dist-sys</span>
+              <p class="resource-desc">
+                Free distributed systems challenges by Kyle Kingsbury
+                (Jepsen). You implement broadcast, gossip, totally-ordered
+                broadcast, in Go. The most undervalued resource on this
+                list. If you have ever read about Raft and wanted to feel it,
+                start here.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">MIT 6.5840 Distributed Systems Labs</span>
+              <span class="resource-url">search: "MIT 6.5840"</span>
+              <p class="resource-desc">
+                MIT's graduate distributed systems course. Lab assignments
+                are public &mdash; you implement Raft and a fault-tolerant
+                key-value store in Go. The labs are the course; the lectures
+                are bonus.
+              </p>
+            </div>
+
+            <h3>Databases &mdash; from the inside</h3>
+
+            <div class="resource">
+              <span class="resource-name">CMU 15-445 / BusTub</span>
+              <span class="resource-url">search: "CMU 15-445 BusTub"</span>
+              <p class="resource-desc">
+                Carnegie Mellon's database systems course, all materials
+                free, lectures on YouTube. You implement parts of a real
+                DBMS (BusTub) in C++ &mdash; buffer pool manager, B+ tree,
+                query executor. The best undergrad database training that
+                exists.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">PG Exercises</span>
+              <span class="resource-url">pgexercises.com</span>
+              <p class="resource-desc">
+                Practice SQL on a realistic Postgres sample database.
+                Joins, aggregates, recursive queries, window functions. Sets
+                of problems graded by difficulty.
+              </p>
+            </div>
+
+            <h3>The metal &mdash; computers from the ground up</h3>
+
+            <div class="resource">
+              <span class="resource-name">NAND to Tetris</span>
+              <span class="resource-url">nand2tetris.org</span>
+              <p class="resource-desc">
+                Build a working computer from NAND gates up to a Tetris
+                game. Twelve projects: ALU, CPU, assembler, virtual machine,
+                compiler, OS. The single most life-changing CS curriculum
+                that exists. Free. Do it.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">Linux From Scratch</span>
+              <span class="resource-url">linuxfromscratch.org</span>
+              <p class="resource-desc">
+                Build a working Linux distribution from source. Tedious,
+                long, occasionally infuriating &mdash; and the only way to
+                actually understand what is in your OS. Allow a weekend.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">OSDev Wiki</span>
+              <span class="resource-url">wiki.osdev.org</span>
+              <p class="resource-desc">
+                The hobby OS development wiki. If you ever want to write
+                your own bootloader, kernel, or scheduler, this is where the
+                community lives. Pairs well with
+                <em>Operating Systems: Three Easy Pieces</em>.
+              </p>
+            </div>
+
+            <h3>Adversarial &mdash; how things actually break</h3>
+
+            <div class="resource">
+              <span class="resource-name">Cryptopals Crypto Challenges</span>
+              <span class="resource-url">cryptopals.com</span>
+              <p class="resource-desc">
+                Sixty-six challenges where you implement and then break real
+                cryptographic schemes. The Matasano challenges. Builds
+                adversarial intuition like nothing else.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">OverTheWire Wargames</span>
+              <span class="resource-url">overthewire.org</span>
+              <p class="resource-desc">
+                SSH-based wargames. <em>Bandit</em> is a complete Unix
+                command-line bootcamp delivered as a puzzle. <em>Natas</em>
+                is web security. <em>Leviathan</em> is binary exploitation.
+                Free.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">PicoCTF</span>
+              <span class="resource-url">picoctf.org</span>
+              <p class="resource-desc">
+                CMU's beginner-friendly capture-the-flag. Year-round
+                practice mode. Covers reverse engineering, crypto, forensics,
+                web. Better entry point than HackTheBox for newcomers.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">Microcorruption</span>
+              <span class="resource-url">microcorruption.com</span>
+              <p class="resource-desc">
+                Embedded systems reverse-engineering CTF, in the browser. You
+                debug MSP430 assembly to unlock virtual safes. Niche, brilliant,
+                completely free.
+              </p>
+            </div>
+
+            <h3>Daily and weekly practice</h3>
+
+            <div class="resource">
+              <span class="resource-name">Advent of Code</span>
+              <span class="resource-url">adventofcode.com</span>
+              <p class="resource-desc">
+                Twenty-five days of programming puzzles every December.
+                Two-part problems, escalating difficulty. The best annual
+                excuse to try a new language; the puzzle set quietly teaches
+                pathfinding, parsing, intcode, dynamic programming.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">Exercism</span>
+              <span class="resource-url">exercism.org</span>
+              <p class="resource-desc">
+                Language tracks with optional human mentor feedback on every
+                solution. Free. Best place to learn a new language well,
+                rather than badly.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">JS Challenger</span>
+              <span class="resource-url">jschallenger.com</span>
+              <p class="resource-desc">
+                JavaScript problems organized by topic &mdash; arrays,
+                strings, objects, async, regex, classes. Browser-based,
+                instant feedback, free. Excellent for keeping JS fluency
+                sharp without committing to a whole course.
+              </p>
+            </div>
+
+            <h3>Frontend &mdash; if you actually want to ship UI</h3>
+
+            <div class="resource">
+              <span class="resource-name">Frontend Mentor</span>
+              <span class="resource-url">frontendmentor.io</span>
+              <p class="resource-desc">
+                Real design specs (Figma files) you implement in HTML/CSS/JS
+                of your choice. The closest analog to actual frontend work.
+                Free tier is generous.
+              </p>
+            </div>
+
+            <h3>Read real code &mdash; the meta-skill</h3>
+
+            <div class="resource">
+              <span class="resource-name">The Architecture of Open Source Applications</span>
+              <span class="resource-url">aosabook.org</span>
+              <p class="resource-desc">
+                Free book series where the maintainers of major open-source
+                projects (Postgres, nginx, Asterisk, etc.) explain how their
+                systems are designed. The most undervalued resource for
+                system-design intuition.
+              </p>
+            </div>
+
+            <h3>Companion reads &mdash; not hands-on, but they make the hands-on stick</h3>
+
+            <div class="resource">
+              <span class="resource-name">Julia Evans &mdash; Wizard Zines</span>
+              <span class="resource-url">wizardzines.com</span>
+              <p class="resource-desc">
+                Illustrated zines on Unix, networking, debugging, SQL,
+                containers, kernel internals. The clearest explanations of
+                hard topics on the web. Many are free; a few are paid and
+                worth it.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">Beej's Guide to Network Concepts</span>
+              <span class="resource-url">beej.us/guide/bgnet0</span>
+              <p class="resource-desc">
+                Brian "Beej" Hall has been writing free programming guides
+                for decades. This is his conceptual networking primer
+                &mdash; IP, TCP/UDP, DNS, HTTP, the protocol stack &mdash;
+                without drowning you in socket code. When the concepts
+                click, graduate to his older
+                <em>Guide to Network Programming</em> (bgnet) for the C
+                sockets version.
+              </p>
+            </div>
+
+            <div class="resource">
+              <span class="resource-name">Learning Rust With Entirely Too Many Linked Lists</span>
+              <span class="resource-url">search: "too many linked lists rust"</span>
+              <p class="resource-desc">
+                Notoriously good Rust tutorial &mdash; teaches ownership,
+                borrowing, and lifetimes by failing repeatedly to implement
+                a linked list. The structure of the tutorial is the lesson.
+              </p>
+            </div>
+          </div>
+
+          <h2>How to use this list</h2>
+          <p>
+            Pick one thing. Finish it. Then pick the next one. The temptation
+            with a list this long is to skim it and feel productive. The
+            value is in completion, not coverage. A single finished CodeCrafters
+            track teaches more than a half-attempt at five of them.
+          </p>
+
+          <div class="pull">
+            The engineers who get the most out of these resources are not the
+            ones with the longest reading lists. They are the ones who
+            finished one project per quarter for ten years.
+          </div>
+
+          <p class="footer-note">
+            If you find a gem missing from this list, add it. This document is
+            meant to be edited.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      (function () {
+        const links = document.querySelectorAll("nav a[data-target]");
+        const pages = document.querySelectorAll("section.page");
+        links.forEach((link) => {
+          link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const target = link.getAttribute("data-target");
+            links.forEach((l) => l.classList.remove("active"));
+            pages.forEach((p) => p.classList.remove("active"));
+            link.classList.add("active");
+            const page = document.getElementById(target);
+            if (page) {
+              page.classList.add("active");
+              window.scrollTo({ top: 0, behavior: "instant" });
+            }
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
