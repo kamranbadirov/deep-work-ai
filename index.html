@@ -305,6 +305,17 @@
           </ul>
         </nav>
 
+        <p class="nav-section-label">First principles</p>
+        <nav>
+          <ul>
+            <li><a data-target="three-primitives">The three primitives</a></li>
+            <li><a data-target="turing-von-neumann">Turing &amp; Von Neumann</a></li>
+            <li><a data-target="state-machine">The state machine thread</a></li>
+            <li><a data-target="why-it-matters">Why this compounds</a></li>
+            <li><a data-target="reading-list">The reading list</a></li>
+          </ul>
+        </nav>
+
         <p class="nav-section-label">The plan</p>
         <nav>
           <ul>
@@ -1204,6 +1215,543 @@
           <p class="footer-note">
             If you find a gem missing from this list, add it. This document is
             meant to be edited.
+          </p>
+        </section>
+
+        <!-- FIRST PRINCIPLES: PAGE A -->
+        <section id="three-primitives" class="page">
+          <p class="eyebrow">First principles</p>
+          <h1>Everything is processing, memory, and communication.</h1>
+          <p class="dek">
+            From a hello-world to a distributed database to a browser engine
+            &mdash; every piece of software ever written is a combination of
+            three primitives. Seeing this clearly changes how you read
+            unfamiliar systems.
+          </p>
+
+          <p>
+            Strip any program down far enough and you find the same three
+            things. A CPU transforming state is <strong>processing</strong>.
+            Registers, RAM, and disk holding that state is
+            <strong>memory</strong>. Keyboards, displays, sockets, and
+            filesystems connecting the program to anything outside itself is
+            <strong>communication</strong> (I/O).
+          </p>
+
+          <div class="pull">
+            Billions of lines of code. Decades of engineering. Trillions of
+            dollars of industry. All sitting on three ideas a mathematician
+            sketched in 1936.
+          </div>
+
+          <h2>The spectrum of communication</h2>
+          <p>
+            Not all I/O is equal. There is a sharp intuitive difference between
+            the CPU reading from RAM and a user pressing a key. Both are
+            technically data movement, but they live at opposite ends of a
+            spectrum:
+          </p>
+
+          <div style="background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:22px 28px;margin:20px 0 32px;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:13.5px;line-height:2;">
+            <span style="color:var(--accent);font-weight:600;">CPU registers</span>
+            &rarr; Cache &rarr; RAM &rarr; Disk &rarr; Network &rarr;
+            <span style="color:var(--accent);font-weight:600;">Human</span>
+            <br>
+            <span style="color:var(--muted);font-size:12px;">&larr;&mdash;&mdash;&mdash;&mdash; internal / invisible &mdash;&mdash;&mdash;&mdash;&rarr;&larr;&mdash;&mdash;&mdash;&mdash; external / tangible &mdash;&mdash;&mdash;&mdash;&rarr;</span>
+          </div>
+
+          <p>
+            The further right you go, the slower, lossier, and more
+            boundary-crossing the transfer. Internal data movement (CPU
+            &harr; memory) is effectively part of the processing primitive
+            itself. True I/O is the machine talking to the world.
+          </p>
+
+          <h2>Why this framing is useful</h2>
+          <p>
+            Every technology you will ever encounter is a variation on the
+            theme, not a new thing. React manages a tree of UI state
+            (memory) and re-renders it to the DOM (communication) in response
+            to events (communication), driven by reducers (processing). Kafka
+            stores messages durably (memory), routes them to consumers
+            (communication), and lets you run transformations over them
+            (processing). The names change. The structure does not.
+          </p>
+          <p>
+            When you walk into an unfamiliar codebase or system, the first
+            questions become: <em>Where is the state? How is it
+            transformed? Where are the boundaries?</em> Those three questions
+            will orient you faster than reading documentation.
+          </p>
+
+          <h2>Where the primitives get stressed</h2>
+          <div class="two-col">
+            <div class="col-card">
+              <h4>Distributed systems</h4>
+              <ul>
+                <li>State is spread across machines</li>
+                <li>Communication is unreliable</li>
+                <li>You cannot have all three of consistency, availability, and partition tolerance (CAP)</li>
+                <li>Every hard problem here is the three primitives in tension</li>
+              </ul>
+            </div>
+            <div class="col-card">
+              <h4>The hardware frontier</h4>
+              <ul>
+                <li>Neuromorphic chips merge memory and processing physically</li>
+                <li>Quantum computing blurs the line between state and transformation</li>
+                <li>Dataflow architectures make computation the movement of data itself</li>
+                <li>The primitives may not survive the next hardware revolution</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- FIRST PRINCIPLES: PAGE B -->
+        <section id="turing-von-neumann" class="page">
+          <p class="eyebrow">First principles</p>
+          <h1>Turing asked what is possible. Von Neumann asked how to build it.</h1>
+          <p class="dek">
+            Two models, two questions, one answer. Understanding the difference
+            between them is the foundation of understanding what computation
+            actually is.
+          </p>
+
+          <h2>The Turing Machine (1936)</h2>
+          <p>
+            Alan Turing's machine was never meant to be built. It was a thought
+            experiment designed to answer a single question: <em>what problems
+            can be solved by any mechanical process at all?</em> To answer that,
+            he needed the simplest possible model of computation. He found it in
+            three parts.
+          </p>
+
+          <div class="topic" style="margin-top:24px;">
+            <span class="topic-tag">The three parts of a Turing Machine</span>
+            <p class="row-label">Tape</p>
+            <ul><li>An infinite strip of cells, each holding a symbol. Memory <em>and</em> I/O collapsed into one &mdash; the tape is everything external to the machine's current state.</li></ul>
+            <p class="row-label">Read/write head</p>
+            <ul><li>Reads the current cell, writes a new symbol, moves left or right. The only processing primitive.</li></ul>
+            <p class="row-label">State table</p>
+            <ul><li>A finite set of rules: given this state and this symbol, write that symbol, move this direction, transition to that state. The program.</li></ul>
+          </div>
+
+          <p>
+            Notice: memory and I/O are not separated. The tape is both. Turing
+            worked with <strong>two</strong> primitives (state + tape + rules
+            collapses to state and transformation), not three. The physical
+            separation of memory from I/O came later, forced by engineering.
+          </p>
+
+          <div class="pull">
+            Do not try to map the Turing Machine to real hardware. It will
+            confuse you. It is a proof about the limits of the possible, not
+            a blueprint for a machine.
+          </div>
+
+          <h2>Von Neumann Architecture (1945)</h2>
+          <p>
+            John von Neumann's report on the EDVAC, written nine years after
+            Turing's paper, answered a different question: given that we know
+            computation is possible in principle, how do we actually build a
+            general-purpose computer? The answer produced the architecture that
+            every laptop, phone, and server still runs on.
+          </p>
+
+          <div class="topic" style="margin-top:24px;">
+            <span class="topic-tag">The Von Neumann split &mdash; and your three primitives</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:12px;">
+              <div>
+                <p class="row-label">CPU</p>
+                <ul><li>Arithmetic logic unit</li><li>Control unit</li><li>Registers</li><li>&rarr; <strong>Processing</strong></li></ul>
+              </div>
+              <div>
+                <p class="row-label">Memory</p>
+                <ul><li>Instructions and data in the same space</li><li>RAM, later disk</li><li>&rarr; <strong>Memory</strong></li></ul>
+              </div>
+              <div>
+                <p class="row-label">I/O</p>
+                <ul><li>Input devices</li><li>Output devices</li><li>Bus connecting them</li><li>&rarr; <strong>Communication</strong></li></ul>
+              </div>
+            </div>
+          </div>
+
+          <h2>The one idea that made software software</h2>
+          <p>
+            The radical decision in Von Neumann architecture was that
+            <strong>instructions and data share the same memory</strong>. Before
+            this, programs were wired into the hardware. To change the program,
+            you rewired the machine. The stored-program model made code
+            manipulable &mdash; a program could read, write, and generate other
+            programs. This single decision is why compilers, operating systems,
+            interpreters, and virtual machines exist. Every abstraction in
+            software traces back to this moment.
+          </p>
+
+          <h2>The mental anchors</h2>
+          <div class="two-col">
+            <div class="col-card">
+              <h4>Turing Machine</h4>
+              <ul>
+                <li>A person following rules on paper, mechanically, with no understanding</li>
+                <li>Ask: <em>can this problem be solved at all?</em></li>
+                <li>Theoretical. Infinite tape. Not buildable.</li>
+                <li>Worth understanding philosophically</li>
+              </ul>
+            </div>
+            <div class="col-card">
+              <h4>Von Neumann</h4>
+              <ul>
+                <li>A chef (CPU) working from a recipe (memory) while ingredients arrive and dishes go out (I/O)</li>
+                <li>Ask: <em>how is this built?</em></li>
+                <li>Engineering. Real silicon. Everywhere.</li>
+                <li>Worth internalizing deeply</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- FIRST PRINCIPLES: PAGE C -->
+        <section id="state-machine" class="page">
+          <p class="eyebrow">First principles</p>
+          <h1>The state machine is the unifying thread.</h1>
+          <p class="dek">
+            Every word in the mental model word cloud &mdash; Turing, Von Neumann,
+            CPU, memory, communication, first principles &mdash; is an instance
+            of one concept. The state machine generalizes all of them.
+          </p>
+
+          <p>
+            A state machine is the simplest possible model of a system that
+            changes over time. It has three ingredients: a set of possible
+            states, a set of possible inputs, and a transition function that
+            maps (current state + input) to next state.
+            That is all. Everything else is elaboration.
+          </p>
+
+          <h2>How the hierarchy nests</h2>
+          <div style="background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:22px 28px;margin:20px 0 32px;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:13px;line-height:1.9;">
+            <span style="color:var(--muted);">// The question hierarchy</span><br>
+            <span style="color:var(--accent);font-weight:600;">What CAN be computed?</span>  &rarr;  Turing Machine <span style="color:var(--muted);">(state machine + infinite tape)</span><br>
+            <span style="color:var(--accent);font-weight:600;">How do we BUILD it?</span>     &rarr;  Von Neumann     <span style="color:var(--muted);">(state machine in silicon)</span><br>
+            <span style="color:var(--accent);font-weight:600;">How do we MODEL it?</span>     &rarr;  State machine   <span style="color:var(--muted);">(the abstraction under both)</span><br>
+            <span style="color:var(--accent);font-weight:600;">How do we THINK about it?</span> &rarr;  3 primitives    <span style="color:var(--muted);">(the engineer's lens)</span>
+          </div>
+
+          <p>
+            A Turing Machine is a state machine with an infinite tape attached.
+            A Von Neumann CPU is a state machine whose state lives in registers
+            and whose transitions are encoded as instructions in memory. Every
+            React component you have ever written is a state machine: props and
+            events are inputs, the component's state is the state, and the
+            render function is the transition. The word-cloud topics are not
+            different fields. They are the same pattern at different scales.
+          </p>
+
+          <h2>Why the state machine is the right primitive</h2>
+          <p>
+            Most bugs are state bugs. The system is in a state it should never
+            reach, or it transitions incorrectly, or two parts of the system
+            disagree about what the current state is. The case study at the
+            start of this document is exactly this: Redux held one version of
+            the state, the URL held another, and the component was reading
+            from the wrong one.
+          </p>
+          <p>
+            Engineers who think in state machines ask the right questions
+            instinctively: <em>What are the valid states? What transitions are
+            allowed? What happens if two transitions fire simultaneously? Is
+            there a state from which recovery is impossible?</em> These
+            questions cut across every layer of the stack.
+          </p>
+
+          <h2>The word cloud, resolved</h2>
+          <div class="topic">
+            <span class="topic-tag">Everything is the same pattern</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 32px;margin-top:8px;">
+              <div>
+                <p class="row-label">State machine</p>
+                <ul><li>The mathematical abstraction that unifies everything else</li></ul>
+                <p class="row-label">Mental models</p>
+                <ul><li>Your state machine for reasoning about systems</li></ul>
+                <p class="row-label">Building blocks</p>
+                <ul><li>Processing + Memory + Communication &mdash; the state machine decomposed into engineering parts</li></ul>
+                <p class="row-label">Turing Machine</p>
+                <ul><li>State machine + infinite tape = proof of the limits of the computable</li></ul>
+              </div>
+              <div>
+                <p class="row-label">Von Neumann</p>
+                <ul><li>State machine in silicon, with the primitives split into physical units</li></ul>
+                <p class="row-label">CPU + Memory + Communication</p>
+                <ul><li>The three parts of a Von Neumann state machine</li></ul>
+                <p class="row-label">First principles</p>
+                <ul><li>The discipline of asking &ldquo;what is the state machine under this?&rdquo; at every layer</li></ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FIRST PRINCIPLES: PAGE D -->
+        <section id="why-it-matters" class="page">
+          <p class="eyebrow">First principles</p>
+          <h1>Why this compounds.</h1>
+          <p class="dek">
+            First-principles thinking does not help you fix a bug tomorrow.
+            It changes what you see, what you ask, and what you can reason about
+            without having seen it before. That is a slow-burn, high-compound
+            advantage.
+          </p>
+
+          <h2>You stop being intimidated</h2>
+          <p>
+            When you see Kafka, Kubernetes, React, or PostgreSQL for the first
+            time, the mental reflex shifts from <em>"I need to learn this
+            thing"</em> to <em>"I need to understand what state this manages,
+            how it processes, and how it communicates."</em> Every new
+            technology becomes a variation, not a novelty. The surface area
+            of the unknown shrinks permanently.
+          </p>
+
+          <h2>You ask better questions</h2>
+          <p>
+            Most engineers ask <em>how do I use this?</em>
+            First-principles thinkers ask the questions that cut through
+            documentation faster than any tutorial:
+          </p>
+          <ul class="body">
+            <li>Where does this system store state? Is it durable or ephemeral?</li>
+            <li>What are the consistency guarantees, and what breaks them?</li>
+            <li>Where is the communication bottleneck, and what happens when it fails?</li>
+            <li>What transitions are impossible to recover from?</li>
+          </ul>
+
+          <h2>You understand why limitations exist</h2>
+          <p>
+            The limitations stop feeling arbitrary. They have reasons rooted in
+            the primitives:
+          </p>
+          <ul class="body">
+            <li>Distributed consensus is hard because you cannot synchronize state across unreliable communication.</li>
+            <li>Databases are slow because persistence means crossing the memory &harr; disk boundary.</li>
+            <li>React has <code>useEffect</code> because UI is a function of state, and side effects are communication leaking in from outside.</li>
+            <li>Deadlocks happen because two state machines are each waiting for the other to transition first.</li>
+          </ul>
+
+          <h2>You can reason about systems you have never seen</h2>
+          <p>
+            This is the real superpower. Senior engineers do this constantly
+            &mdash; walk into an unfamiliar codebase or architecture and quickly
+            build a working mental model. First principles is the scaffold they
+            use, often without naming it. Making it explicit makes it portable
+            and deliberately applicable.
+          </p>
+
+          <div class="pull">
+            What you are doing is making implicit knowledge explicit. That is
+            rarer and more transferable than accumulated experience alone,
+            because experience is domain-locked. Principles travel.
+          </div>
+
+          <h2>The craftsman &rarr; engineer &rarr; scientist progression</h2>
+          <p>
+            Most people stop at one of two levels. The craftsman: <em>"I can
+            build things."</em> The engineer: <em>"I understand systems."</em>
+            The third level is the scientist or philosopher: <em>"I see the
+            underlying order."</em>
+          </p>
+          <p>
+            You do not arrive at the third level by reading more. You arrive
+            by going deep enough in enough different areas that the abstractions
+            become transparent &mdash; like learning enough languages that you
+            stop thinking in words and start thinking in concepts. Systems
+            programming is the most reliable catalyst, because it is the layer
+            where abstractions get thin and there is nowhere to hide.
+          </p>
+
+          <h2>The honest caveat</h2>
+          <p>
+            Most great software engineers do not explicitly think this way.
+            They have accumulated enough patterns that their intuition is
+            implicitly first-principles. The difference is that explicit
+            first-principles thinking is faster to acquire, easier to
+            transmit, and more robust under novel conditions. Experience
+            is pattern-matching. First principles is generative.
+          </p>
+        </section>
+
+        <!-- FIRST PRINCIPLES: PAGE E -->
+        <section id="reading-list" class="page">
+          <p class="eyebrow">First principles</p>
+          <h1>The reading list.</h1>
+          <p class="dek">
+            Curated for an engineer who thinks in systems, is drawn to
+            foundations, and wants the formal vocabulary to match the
+            intuition already built. Not a checklist &mdash; a direction.
+          </p>
+
+          <h2>Mindset layer &mdash; read these first</h2>
+
+          <div class="resource">
+            <span class="resource-name">Gödel, Escher, Bach</span>
+            <span class="resource-url">Douglas Hofstadter, 1979</span>
+            <p class="resource-desc">
+              Not a CS book technically. The closest thing to a philosophical
+              exploration of what computation, self-reference, and meaning
+              really are. What does it mean for a system to refer to itself?
+              Where does meaning come from in a mechanical process? Mandatory
+              for the kind of mind that asks "what is programming, really."
+            </p>
+          </div>
+
+          <div class="resource">
+            <span class="resource-name">The Art of Doing Science and Engineering</span>
+            <span class="resource-url">Richard Hamming, 1997</span>
+            <p class="resource-desc">
+              Not about algorithms. About how to think as an engineer-scientist.
+              Hamming invented error-correcting codes and spent his career
+              asking first-principles questions at Bell Labs. This is his
+              distilled life's wisdom on what it means to do great work.
+            </p>
+          </div>
+
+          <h2>Computation and theory &mdash; formalize the intuition</h2>
+
+          <div class="resource">
+            <span class="resource-name">Introduction to the Theory of Computation</span>
+            <span class="resource-url">Michael Sipser, 3rd ed.</span>
+            <p class="resource-desc">
+              The cleanest, most readable treatment of automata, Turing
+              machines, and complexity that exists. This is where the informal
+              intuitions from this conversation get formal names and proofs.
+              State machines, regular languages, context-free grammars,
+              decidability, NP-completeness &mdash; all in one book.
+            </p>
+          </div>
+
+          <div class="resource">
+            <span class="resource-name">Computers and Intractability</span>
+            <span class="resource-url">Garey &amp; Johnson, 1979</span>
+            <p class="resource-desc">
+              The classic on NP-completeness. Why some problems are
+              fundamentally hard regardless of how clever the algorithm.
+              Connects first-principles thinking to the hard limits of
+              computation itself.
+            </p>
+          </div>
+
+          <h2>Architecture &mdash; the engineering answer</h2>
+
+          <div class="resource">
+            <span class="resource-name">Computer Organization and Design</span>
+            <span class="resource-url">Patterson &amp; Hennessy, 6th ed.</span>
+            <p class="resource-desc">
+              The bridge between Von Neumann architecture and real hardware.
+              Where theory meets silicon. After reading this, the three
+              primitives are not abstract &mdash; you can trace them through
+              actual circuits, pipelines, and memory hierarchies.
+            </p>
+          </div>
+
+          <div class="resource">
+            <span class="resource-name">Operating Systems: Three Easy Pieces</span>
+            <span class="resource-url">Arpaci-Dusseau &mdash; ostep.org (free)</span>
+            <p class="resource-desc">
+              The three pieces are virtualization, concurrency, and persistence.
+              Restate those as processing, communication, and memory and the
+              connection is exact. The best OS textbook written in the last
+              twenty years, and it is free.
+            </p>
+          </div>
+
+          <h2>Abstraction and language &mdash; how layers are built</h2>
+
+          <div class="resource">
+            <span class="resource-name">Structure and Interpretation of Computer Programs</span>
+            <span class="resource-url">Abelson &amp; Sussman (SICP) &mdash; free online</span>
+            <p class="resource-desc">
+              Probably the most important CS book ever written. Builds
+              computation from scratch in Scheme. Every abstraction is
+              constructed in front of you. You watch a language grow from
+              primitives to an interpreter to a compiler. This is the
+              book that makes all other abstractions transparent.
+            </p>
+          </div>
+
+          <div class="resource">
+            <span class="resource-name">Types and Programming Languages</span>
+            <span class="resource-url">Benjamin Pierce, 2002</span>
+            <p class="resource-desc">
+              For when you want to understand how type systems work at a
+              fundamental level &mdash; why Rust's borrow checker exists,
+              why Haskell's types are expressive, what a type actually
+              <em>is</em>. Formal but tractable. Read after SICP.
+            </p>
+          </div>
+
+          <h2>Distributed systems &mdash; primitives under pressure</h2>
+
+          <div class="resource">
+            <span class="resource-name">Designing Data-Intensive Applications</span>
+            <span class="resource-url">Martin Kleppmann, 2017</span>
+            <p class="resource-desc">
+              The best modern treatment of distributed systems for
+              practitioners. Kleppmann always asks why, not just how. You
+              will see the three primitives pulled apart and examined under
+              the stress of unreliable networks, concurrent writes, and
+              hardware failure. The chapter on consistency models alone is
+              worth the price.
+            </p>
+          </div>
+
+          <h2>Information theory &mdash; Shannon's answer</h2>
+
+          <div class="resource">
+            <span class="resource-name">The Information</span>
+            <span class="resource-url">James Gleick, 2011</span>
+            <p class="resource-desc">
+              A narrative history of information theory from African
+              talking drums to Claude Shannon. Not technical. Read this
+              first for context and wonder. Turing asked what is
+              computable; Shannon asked what is communicable. Together
+              they form a complete picture of what computation is.
+            </p>
+          </div>
+
+          <div class="resource">
+            <span class="resource-name">Elements of Information Theory</span>
+            <span class="resource-url">Cover &amp; Thomas, 2nd ed.</span>
+            <p class="resource-desc">
+              The formal version of Shannon's ideas fully developed.
+              Entropy, channel capacity, compression, error correction.
+              Read after Gleick. This is the mathematics underneath every
+              network protocol, every codec, every compression algorithm.
+            </p>
+          </div>
+
+          <h2>Suggested reading order</h2>
+          <div style="background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:22px 28px;margin:20px 0 32px;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:13px;line-height:2;">
+            <span style="color:var(--muted);">// Start here</span><br>
+            <span style="color:var(--accent);">Now</span>        &rarr;  GEB + Hamming <span style="color:var(--muted);">(mindset, read in parallel)</span><br>
+            <span style="color:var(--accent);">Then</span>       &rarr;  Sipser + Patterson &amp; Hennessy <span style="color:var(--muted);">(formalism + hardware)</span><br>
+            <span style="color:var(--accent);">Then</span>       &rarr;  SICP <span style="color:var(--muted);">(take your time &mdash; do the exercises)</span><br>
+            <span style="color:var(--accent);">Then</span>       &rarr;  OSTEP + Kleppmann <span style="color:var(--muted);">(systems in practice)</span><br>
+            <span style="color:var(--accent);">Eventually</span> &rarr;  Pierce + Cover &amp; Thomas <span style="color:var(--muted);">(deep formalism)</span>
+          </div>
+
+          <div class="pull">
+            The itch you have &mdash; "what is this, really" &mdash; is the most
+            valuable thing you own as an engineer. The books will feed it.
+            But the real work is continuing to build things at the systems
+            level while asking that question. Theory without building gets
+            abstract. Building without theory gets repetitive. You are
+            already doing both. Keep pulling the thread.
+          </div>
+
+          <p class="footer-note">
+            This section grew out of a conversation about first principles in
+            computing. The argument: experience is pattern-matching, but
+            first principles is generative. Principles travel where experience
+            cannot.
           </p>
         </section>
       </main>
