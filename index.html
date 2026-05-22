@@ -312,6 +312,7 @@
             <li><a data-target="turing-von-neumann">Turing &amp; Von Neumann</a></li>
             <li><a data-target="state-machine">The state machine thread</a></li>
             <li><a data-target="why-it-matters">Why this compounds</a></li>
+            <li><a data-target="tool-to-primitive">Crossing the abyss</a></li>
             <li><a data-target="reading-list">The reading list</a></li>
           </ul>
         </nav>
@@ -1576,6 +1577,205 @@
             first-principles thinking is faster to acquire, easier to
             transmit, and more robust under novel conditions. Experience
             is pattern-matching. First principles is generative.
+          </p>
+        </section>
+
+        <!-- FIRST PRINCIPLES: PAGE E-bis -->
+        <section id="tool-to-primitive" class="page">
+          <p class="eyebrow">First principles</p>
+          <h1>Crossing the abyss: from any tool back to a primitive.</h1>
+          <p class="dek">
+            The CS concepts you learned in school and the tools you use at
+            work feel like two different worlds. They are not. The gap
+            between them is a habit, not a wall. Here is the move that
+            closes it.
+          </p>
+
+          <h2>The mechanism, in three questions</h2>
+          <p>
+            Every time you encounter a new tool &mdash; a CI workflow file, a
+            database, a framework, a protocol &mdash; run these three questions
+            before reading any documentation. They take ninety seconds. They
+            change what you see.
+          </p>
+
+          <div class="topic">
+            <span class="topic-tag">The three questions</span>
+            <p class="row-label">1 &middot; What problem is this solving, stripped of vocabulary?</p>
+            <ul>
+              <li>Drop the marketing. Drop the brand name. <em>&ldquo;GitHub Actions&rdquo;</em> becomes <em>&ldquo;a thing that runs other things in some order when events happen.&rdquo;</em></li>
+            </ul>
+            <p class="row-label">2 &middot; What is the abstract shape of that problem?</p>
+            <ul>
+              <li>Order-with-dependencies = graph. No cycles allowed = DAG. Triggered by something = event-driven. Describes desired state, not steps = declarative.</li>
+            </ul>
+            <p class="row-label">3 &middot; Where else have I seen this shape?</p>
+            <ul>
+              <li>Make, Airflow, Bazel, Kubernetes, Terraform &mdash; all DAG + declarative. Different domains, same primitive.</li>
+            </ul>
+          </div>
+
+          <p>
+            The move is to refuse to learn the new thing as a new thing.
+            It is already a remix of something you know. Your job is to
+            find which.
+          </p>
+
+          <h2>The mental library you need</h2>
+          <p>
+            Keep these in your head. Every tool you will ever encounter is
+            a composition of two or three of these. Knowing the catalog is
+            the leverage.
+          </p>
+
+          <div class="topic">
+            <span class="topic-tag">The catalog of primitives</span>
+            <p class="row-label">DAG / topological sort</p>
+            <ul><li>Make, CI workflows, Airflow, Bazel, module bundlers, npm dependency resolution</li></ul>
+            <p class="row-label">State machine</p>
+            <ul><li>TCP, React component lifecycle, Kubernetes pod phases, OAuth flow, Stripe payment intents</li></ul>
+            <p class="row-label">Event loop / observer pattern</p>
+            <ul><li>Node.js, React, Redux, Kafka consumers, webhooks</li></ul>
+            <p class="row-label">Control loop (reconciliation)</p>
+            <ul><li>Kubernetes, Terraform, React diffing, Ansible</li></ul>
+            <p class="row-label">Content-addressable storage</p>
+            <ul><li>Git, Docker layers, Nix, IPFS</li></ul>
+            <p class="row-label">Merkle tree</p>
+            <ul><li>Git, blockchain, BitTorrent</li></ul>
+            <p class="row-label">Append-only log</p>
+            <ul><li>Kafka, Postgres WAL, event sourcing, Datomic, Git itself</li></ul>
+            <p class="row-label">Hash map + linked list</p>
+            <ul><li>Redis, LRU caches, V8 object internals</li></ul>
+            <p class="row-label">Tree (B-tree, trie)</p>
+            <ul><li>Every database index, every filesystem, routing tables</li></ul>
+            <p class="row-label">Pub/sub</p>
+            <ul><li>Redis, Kafka, AWS SNS, browser EventTarget, Vue reactivity</li></ul>
+            <p class="row-label">CRDT / vector clock</p>
+            <ul><li>Figma, Linear, Notion's real-time collaboration</li></ul>
+            <p class="row-label">Type system / schema</p>
+            <ul><li>YAML schemas, GraphQL, Protobuf, TypeScript, JSON Schema</li></ul>
+            <p class="row-label">Set theory operations</p>
+            <ul><li>SQL JOINs, Pandas merges, Elasticsearch filters</li></ul>
+            <p class="row-label">Declarative vs. imperative</p>
+            <ul><li>SQL, Terraform, Kubernetes YAML, JSX vs. DOM mutation</li></ul>
+          </div>
+
+          <p>
+            If you can spot which two or three of these a tool is built
+            from, you have already understood seventy percent of it. The
+            other thirty is vocabulary and convention &mdash; trivial once the
+            structure is clear.
+          </p>
+
+          <h2>Worked examples</h2>
+          <p>
+            The pattern is easier to feel than to describe. Six tools,
+            each reduced to its primitives. Notice that none of them is
+            monolithic &mdash; every one is a composition of two or three
+            ideas you already know.
+          </p>
+
+          <div class="topic">
+            <span class="topic-tag">Tools, decomposed</span>
+            <p class="row-label">Git</p>
+            <ul><li>Content-addressable storage (SHA &rarr; blob) + Merkle tree (commit &rarr; tree &rarr; blob) + DAG (commits). Once you see this, <code>rebase</code>, <code>reset</code>, and <code>cherry-pick</code> stop being magic incantations.</li></ul>
+            <p class="row-label">React</p>
+            <ul><li>Observer pattern (state changes notify components) + reconciliation algorithm (diff virtual DOM trees) + topological render order. <code>useEffect</code> is just &ldquo;subscribe to a dependency, fire on change.&rdquo;</li></ul>
+            <p class="row-label">Kubernetes</p>
+            <ul><li>Control loop (desired state vs. actual, reconcile forever) + declarative manifests (a schema-validated YAML spec, just like GitHub Actions). YAML knowledge transfers directly.</li></ul>
+            <p class="row-label">Redux</p>
+            <ul><li>Event sourcing (actions are an append-only log) + reducer (fold over the log). Time-travel debugging falls out for free, because logs are replayable.</li></ul>
+            <p class="row-label">Docker</p>
+            <ul><li>Layered filesystem (content-addressable, like Git) + chroot / namespaces (an OS primitive). Compose is a DAG of services.</li></ul>
+            <p class="row-label">GraphQL</p>
+            <ul><li>A query language over a typed graph. SQL but for trees instead of tables.</li></ul>
+          </div>
+
+          <h2>How to build the habit</h2>
+          <p>
+            The mechanism is simple. The habit is what is hard. Six
+            practices &mdash; none of them are gear-intensive, all of them
+            compound.
+          </p>
+
+          <h3><span class="num">1</span>Name the shape, every time.</h3>
+          <p>
+            When you learn any tool, force yourself to write one sentence:
+            <em>&ldquo;X is essentially a [DAG / state machine / control loop / log / &hellip;]
+            that does Y.&rdquo;</em> If you cannot complete the sentence, you do
+            not understand it yet. That is useful information.
+          </p>
+
+          <h3><span class="num">2</span>Reverse-look-up.</h3>
+          <p>
+            When you learn a CS pattern in a book or a class, immediately
+            ask <em>&ldquo;which tool I use every day implements this?&rdquo;</em>
+            The forward direction (concept &rarr; possible future use) is
+            forgettable. The reverse direction (concept &rarr; tool already
+            in your hands) is sticky, because it attaches the abstraction
+            to muscle memory.
+          </p>
+
+          <h3><span class="num">3</span>Read the design rationale, not just the docs.</h3>
+          <p>
+            Documentation tells you <em>how</em>. The <em>why</em> is where
+            the CS lives. <em>Why was Git designed this way?</em> &mdash;
+            Linus's mailing-list email. <em>Why does Kubernetes
+            reconcile?</em> &mdash; the Borg paper. These primary sources are
+            almost always shorter than the docs and far denser.
+          </p>
+
+          <h3><span class="num">4</span>Implement a toy version.</h3>
+          <p>
+            Build a tiny <code>make</code> clone. A tiny Git. A tiny React.
+            A weekend each. You will not ship them. You will never reach
+            for the real tool again without seeing through it.
+          </p>
+
+          <h3><span class="num">5</span>Read the bridge book deliberately.</h3>
+          <p>
+            <em>Designing Data-Intensive Applications</em> by Martin
+            Kleppmann is the single best book in the field for this gap.
+            Every chapter takes a production-grade tool category &mdash;
+            databases, streams, replication &mdash; and reduces it to first
+            principles. Also worth: the original papers behind tools you
+            use (MapReduce, Raft, Borg, Bigtable). They are shorter than
+            you think.
+          </p>
+
+          <h3><span class="num">6</span>Compare two tools in the same category.</h3>
+          <p>
+            Make vs. Bazel. Redux vs. MobX. Postgres vs. MongoDB. Forcing
+            yourself to articulate the <em>difference</em> forces you to
+            find the underlying axis they vary on &mdash; and that axis is
+            always a CS concept (eager vs. lazy evaluation, push vs. pull,
+            sync vs. async, optimistic vs. pessimistic locking).
+          </p>
+
+          <h2>The meta-insight</h2>
+          <p>
+            Tools come and go. Vocabulary churns every three years.
+            Primitives are stable for decades. If you index your mental
+            model on primitives, learning a new tool takes you an
+            afternoon instead of a month &mdash; because you are not learning
+            anything new, you are matching it to a pattern you already
+            know.
+          </p>
+
+          <div class="pull">
+            The engineers who feel like they are always behind are
+            indexing on tools. The ones who feel calm in a fast-moving
+            stack are indexing on primitives. The question to ask of
+            every new technology is not &ldquo;what is this?&rdquo; but
+            &ldquo;what is this, <em>really</em>?&rdquo;
+          </div>
+
+          <p class="footer-note">
+            This section grew out of a question asked while staring at a
+            GitHub Actions workflow file: <em>&ldquo;how did you connect this
+            to Makefiles, Airflow, and Kubernetes?&rdquo;</em> The mechanism is
+            portable. Run it on every tool you encounter for a year and
+            the abyss closes on its own.
           </p>
         </section>
 
